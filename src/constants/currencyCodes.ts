@@ -1,0 +1,25 @@
+export const GBP = "GBP";
+export const EUR = "EUR";
+export const AED = "AED";
+export const AUD = "AUD";
+export const CAD = "CAD";
+export const CHF = "CHF";
+export const CZK = "CZK";
+export const DKK = "DKK";
+export const HKD = "HKD";
+export const HRK = "HRK";
+export const HUF = "HUF";
+export const ILS = "ILS";
+export const JPY = "JPY";
+export const MXN = "MXN";
+export const NOK = "NOK";
+export const NZD = "NZD";
+export const PLN = "PLN";
+export const RON = "RON";
+export const SAR = "SAR";
+export const SEK = "SEK";
+export const SGD = "SGD";
+export const TRY = "TRY";
+export const USD = "USD";
+export const ZAR = "ZAR";
+

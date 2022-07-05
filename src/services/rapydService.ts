@@ -6,6 +6,17 @@ import axios, { AxiosInstance } from "axios";
 import ErrorResponse from "../utils/errorResponse";
 import { RapydResponse } from "../models/baseRapydResponse";
 import { ICreateWallet, IResponseCreateWallet } from "interfaces/db/idbwallet";
+import {
+  ICreateCustomer,
+  ICreateCustomerResponse,
+} from "interfaces/db/idbcontact";
+import { IdentityVerification } from "interfaces/rapyd/iwallet";
+import {
+  ICreateVirtualAccount,
+  ICreateVirtualAccountResponse,
+  ISimulateBankTransfer,
+} from "interfaces/db/idbvirtualaccount";
+import { response } from "express";
 
 class RapydService {
   private _accessKey: string;
@@ -37,11 +48,10 @@ class RapydService {
       req.headers!.timestamp = timestamp;
       req.headers!.access_key = this._accessKey;
       req.headers!.signature = signature;
-      console.log(req.headers!.access_key);
-      console.log(req.headers!.signature);
       return req;
     });
   }
+
   public async createWallet(
     body: ICreateWallet.Root
   ): Promise<IResponseCreateWallet.Root | undefined> {
@@ -49,6 +59,170 @@ class RapydService {
       const response = await this._axiosClient.post<
         RapydResponse<IResponseCreateWallet.Root>
       >("/v1/user", body);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+  public async getWallet(eWallet: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/user/${eWallet}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async createCustomer(
+    body: ICreateCustomer
+  ): Promise<ICreateCustomerResponse | undefined> {
+    try {
+      const response = await this._axiosClient.post<
+        RapydResponse<ICreateCustomerResponse | undefined>
+      >("/v1/customers", body);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async generateIdentityVerificationPage(
+    body: IdentityVerification.Request
+  ): Promise<IdentityVerification.Response | undefined> {
+    try {
+      const response = await this._axiosClient.post<
+        RapydResponse<IdentityVerification.Response>
+      >("/v1/hosted/idv", body);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async listContactsForRapydWallet(eWallet: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/ewallets/${eWallet}/contacts`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async issueVirtualAccountToWallet(
+    body: ICreateVirtualAccount
+  ): Promise<ICreateVirtualAccountResponse | undefined> {
+    try {
+      const response = await this._axiosClient.post<
+        RapydResponse<ICreateVirtualAccountResponse>
+      >("/v1/issuing/bankaccounts", body);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async listVirtualAccountsByWallet(ewallet: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/issuing/bankaccounts/list?ewallet=${ewallet}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async simulateBankTransfer(body: ISimulateBankTransfer): Promise<any> {
+    try {
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        "/v1/issuing/bankaccounts/bankaccounttransfertobankaccount",
+        body
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async retrieveVirtualAccountHistory(
+    issued_bank_account: string
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/issuing/bankaccounts/${issued_bank_account}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async retrieveVirtualAccountTransaction(
+    issued_bank_account: string,
+    transaction: string
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/issuing/bankaccounts/${issued_bank_account}/transactions/${transaction}`
+      );
       return response.data.data;
     } catch (error: any) {
       if (error.isAxiosError) {

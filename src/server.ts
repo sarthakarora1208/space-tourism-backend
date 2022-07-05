@@ -18,9 +18,16 @@ const xss = require("xss-clean");
 import errorHandler from "./middleware/error";
 import { DataSource } from "typeorm";
 import { User } from "./entities/User";
-import { BASE_ROUTE, RAPYD_ROUTE } from "./constants/routes";
+import { BASE_ROUTE, RAPYD_ROUTE, WEBHOOK_ROUTE } from "./constants/routes";
 
 import rapydRoute from "./routes/rapyd.route";
+import webhookRoute from "./routes/webhook.route";
+import { Business } from "./entities/Business";
+import { SpaceService } from "./entities/SpaceService";
+import { Rate } from "./entities/Rate";
+import { Order } from "./entities/Order";
+import { Review } from "./entities/Review";
+
 dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 
 export const environment = process.env.NODE_ENV;
@@ -47,8 +54,9 @@ export const dataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   logging: true,
+  synchronize: false,
   port: 5432,
-  entities: [User],
+  entities: [User, Business, Order, Review, SpaceService, Rate],
 });
 
 dataSource
@@ -61,6 +69,11 @@ dataSource
   });
 
 const PORT = process.env.PORT || 5000;
+console.log(
+  (async () => {
+    console.log(await dataSource.getRepository(User).find());
+  })()
+);
 
 // app
 const app = express();
@@ -116,6 +129,8 @@ app.use(errorHandler);
 //app.use(`${BASE_ROUTE}${AUTH}`, );
 
 app.use(`${BASE_ROUTE}${RAPYD_ROUTE}`, rapydRoute);
+app.use(`${BASE_ROUTE}${WEBHOOK_ROUTE}`, webhookRoute);
+
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });

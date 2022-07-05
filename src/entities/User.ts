@@ -12,11 +12,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { IsEmail } from "class-validator";
-import { USER_ROLE } from "./../constants/userRoles";
-// import { Order } from "./Order";
-// import { Business } from "./Business";
-// import { Review } from "./Review";
-// import { GENDER } from "../constants/gender";
+import { USER_ROLE } from "../constants/userRoles";
+import { GENDER } from "../constants/gender";
+import { Business } from "./Business";
+import { Order } from "./Order";
+import { Review } from "./Review";
 
 @Entity()
 export class User {
@@ -39,9 +39,8 @@ export class User {
   @Column({ type: "timestamptz", default: "NOW()" })
   dob: Date;
 
-  // gender
-  //   @Column({ type: "enum", enum: GENDER, default: GENDER.MALE })
-  //   gender: GENDER;
+  @Column({ type: "enum", enum: GENDER, default: GENDER.MALE })
+  gender: GENDER;
 
   @Column({ type: "enum", enum: USER_ROLE, default: USER_ROLE.CUSTOMER })
   role!: USER_ROLE;
@@ -58,18 +57,24 @@ export class User {
   @Column({ default: "no-street" })
   city: string;
 
-  @Column({ default: "Canada" })
+  @Column({ default: "GB" })
   country: string;
 
   @Column({ default: "" })
   postalCode: string;
-
-  @Column({ default: false })
-  allowMessagesFromOtherCustomer: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Business, (business) => business.users)
+  business: Business;
+
+  @OneToMany(() => Order, (order) => order.user)
+  order: Order[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
 }

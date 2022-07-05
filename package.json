@@ -4,7 +4,8 @@
   "description": "Space Tourism Backend",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node-dev --respawn src/server.ts",
+    "start:dev1": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true ts-node-dev --respawn src/server.ts",
+    "start:dev": "nodemon src/server.ts",
     "kill-port": "kill-port 5000",
     "remove-dist": "rm -rf dist",
     "copy-config": "copyfiles -f ./src/config/config.env ./dist/config",
@@ -34,7 +35,6 @@
     "http-method-enum": "^1.0.0",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.18",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "ts-node-dev": "^2.0.0",
@@ -49,6 +49,8 @@
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
     "@types/hpp": "^0.2.2",
-    "@types/morgan": "^1.9.3"
+    "@types/morgan": "^1.9.3",
+    "nodemon": "^2.0.18",
+    "ts-node": "^10.8.2"
   }
 }

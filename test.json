@@ -1,0 +1,67 @@
+{
+  phone_number: '+923456789',
+  email: 'email2@gmail.com',
+  first_name: 'first name',
+  last_name: 'last name',
+  id: 'ewallet_8a8782e022648cce7ed1bef11618eceb',
+  status: 'ACT',
+  accounts: [],
+  verification_status: 'not verified',
+  type: 'person',
+  metadata: {},
+  ewallet_reference_id: '1234567890',
+  category: null,
+  contacts: {
+    data: [ [Object] ],
+    has_more: false,
+    total_count: 1,
+    url: '/v1/ewallets/ewallet_8a8782e022648cce7ed1bef11618eceb/contacts'
+  }
+}
+{
+  id: 'cus_ea59fc3bee4052aef6ae1f98ce507856',
+  delinquent: false,
+  discount: null,
+  name: 'first name last name',
+  default_payment_method: '',
+  description: '',
+  email: 'email1@gmail.com',
+  phone_number: '923456789',
+  invoice_prefix: 'qCEO-',
+  addresses: [],
+  payment_methods: null,
+  subscriptions: null,
+  created_at: 1656938294,
+  metadata: { contact_reference_id: '1234567891' },
+  business_vat_id: '123456789',
+  ewallet: 'ewallet_8a8782e022648cce7ed1bef11618eceb'
+}
+
+{
+  id: 'issuing_b80faa8884bb92dd83c67af400524f1e',
+  merchant_reference_id: '5rtfgk8970dfbm',
+  ewallet: 'ewallet_8a8782e022648cce7ed1bef11618eceb',
+  bank_account: {
+    beneficiary_name: 'Rapyd Holdings Pte Ltd',
+    address: '12 Marina Boulevard, DBS Asia Central, Marina Bay Financial Center Tower 3',
+    country_iso: 'SG',
+    bank: 'DBS Bank',
+    zip: '018892',
+    country: 'Singapore',
+    account_number: '8850780138613670',
+    bic: 'DBSSSGSGXXX'
+  },
+  metadata: { merchant_defined: true },
+  status: 'ACT',
+  description: 'Issue test bank account',
+  funding_instructions: null,
+  currency: 'SGD',
+  transactions: [
+    {
+      id: 'isutran_2f9207af76de14639fa64c977ce70202',
+      amount: 100,
+      currency: 'EUR',
+      created_at: 1656958987
+    }
+  ]
+}
