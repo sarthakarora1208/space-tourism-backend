@@ -5,18 +5,20 @@ import HttpMethod from "http-method-enum";
 import axios, { AxiosInstance } from "axios";
 import ErrorResponse from "../utils/errorResponse";
 import { RapydResponse } from "../models/baseRapydResponse";
-import { ICreateWallet, IResponseCreateWallet } from "interfaces/db/idbwallet";
+import {
+  ICreateWallet,
+  IResponseCreateWallet,
+} from "../interfaces/db/idbwallet";
 import {
   ICreateCustomer,
   ICreateCustomerResponse,
-} from "interfaces/db/idbcontact";
-import { IdentityVerification } from "interfaces/rapyd/iwallet";
+} from "../interfaces/db/idbcontact";
+import { IdentityVerification } from "../interfaces/rapyd/iwallet";
 import {
   ICreateVirtualAccount,
   ICreateVirtualAccountResponse,
   ISimulateBankTransfer,
-} from "interfaces/db/idbvirtualaccount";
-import { response } from "express";
+} from "../interfaces/db/idbvirtualaccount";
 
 class RapydService {
   private _accessKey: string;

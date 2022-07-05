@@ -21,39 +21,40 @@ export interface IGetUserAuthInfoRequest extends Request {
 
 export const protect = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
-    let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      // Set token from Bearer token in header
-      token = req.headers.authorization.split(" ")[1];
-      // Set token from cookie
-    }
+    next();
+    // let token;
+    // if (
+    //   req.headers.authorization &&
+    //   req.headers.authorization.startsWith("Bearer")
+    // ) {
+    //   // Set token from Bearer token in header
+    //   token = req.headers.authorization.split(" ")[1];
+    //   // Set token from cookie
+    // }
 
-    if (!token) {
-      return next(
-        new ErrorResponse("Not authorized to access this route", 401)
-      );
-    }
+    // if (!token) {
+    //   return next(
+    //     new ErrorResponse("Not authorized to access this route", 401)
+    //   );
+    // }
 
-    const userRepository = dataSource.getRepository(User);
-    try {
-      // validate cognito user
-      const rawUser = await cognitoIdentityServiceProvider
-        .getUser({ AccessToken: token })
-        .promise();
-      if (!rawUser) {
-        return next(
-          new ErrorResponse("Not authorized to access this route", 401)
-        );
-      } else {
-        console.log(rawUser);
-        next();
-      }
-    } catch (err: any) {
-      return next(new ErrorResponse(err, 401));
-    }
+    // const userRepository = dataSource.getRepository(User);
+    // try {
+    //   // validate cognito user
+    //   const rawUser = await cognitoIdentityServiceProvider
+    //     .getUser({ AccessToken: token })
+    //     .promise();
+    //   if (!rawUser) {
+    //     return next(
+    //       new ErrorResponse("Not authorized to access this route", 401)
+    //     );
+    //   } else {
+    //     console.log(rawUser);
+    //     next();
+    //   }
+    // } catch (err: any) {
+    //   return next(new ErrorResponse(err, 401));
+    // }
   }
 );
 

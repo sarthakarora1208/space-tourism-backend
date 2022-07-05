@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import RapydService from "../services/rapydService";
 import asyncHandler from "../middleware/async";
 
-import { ICreateCustomer } from "interfaces/db/idbcontact";
+import { ICreateCustomer } from "../interfaces/db/idbcontact";
 import { makeId } from "../utils/makeId";
-import { IdentityVerification } from "interfaces/rapyd/iwallet";
+import { IdentityVerification } from "../interfaces/rapyd/iwallet";
 import {
   ICreateVirtualAccount,
   ISimulateBankTransfer,
-} from "interfaces/db/idbvirtualaccount";
+} from "../interfaces/db/idbvirtualaccount";
 
 //@desc
 //@route		POST /api/v1/

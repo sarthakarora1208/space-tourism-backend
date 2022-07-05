@@ -20,6 +20,9 @@ export class SpaceService {
   @Column({ nullable: false })
   name!: string;
 
+  @Column({ default: "" })
+  description: string;
+
   @Column({ default: 0 })
   averageRating: number;
 

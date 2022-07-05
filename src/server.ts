@@ -17,11 +17,29 @@ const xss = require("xss-clean");
 
 import errorHandler from "./middleware/error";
 import { DataSource } from "typeorm";
-import { User } from "./entities/User";
-import { BASE_ROUTE, RAPYD_ROUTE, WEBHOOK_ROUTE } from "./constants/routes";
+
+import {
+  BASE_ROUTE,
+  BUSINESS_ROUTE,
+  CUSTOMER_ROUTE,
+  ORDER_ROUTE,
+  RAPYD_ROUTE,
+  REVIEW_ROUTE,
+  S3_ROUTE,
+  VENDOR_ROUTE,
+  WEBHOOK_ROUTE,
+} from "./constants/routes";
 
 import rapydRoute from "./routes/rapyd.route";
 import webhookRoute from "./routes/webhook.route";
+import businessRoute from "./routes/business.route";
+import customerRoute from "./routes/customer.route";
+import orderRoute from "./routes/order.route";
+import reviewRoute from "./routes/review.route";
+import vendorRoute from "./routes/vendor.route";
+import s3Route from "./routes/s3.route";
+
+import { User } from "./entities/User";
 import { Business } from "./entities/Business";
 import { SpaceService } from "./entities/SpaceService";
 import { Rate } from "./entities/Rate";
@@ -69,11 +87,6 @@ dataSource
   });
 
 const PORT = process.env.PORT || 5000;
-console.log(
-  (async () => {
-    console.log(await dataSource.getRepository(User).find());
-  })()
-);
 
 // app
 const app = express();
@@ -130,6 +143,12 @@ app.use(errorHandler);
 
 app.use(`${BASE_ROUTE}${RAPYD_ROUTE}`, rapydRoute);
 app.use(`${BASE_ROUTE}${WEBHOOK_ROUTE}`, webhookRoute);
+app.use(`${BASE_ROUTE}${BUSINESS_ROUTE}`, businessRoute);
+app.use(`${BASE_ROUTE}${CUSTOMER_ROUTE}`, customerRoute);
+app.use(`${BASE_ROUTE}${ORDER_ROUTE}`, orderRoute);
+app.use(`${BASE_ROUTE}${REVIEW_ROUTE}`, reviewRoute);
+app.use(`${BASE_ROUTE}${VENDOR_ROUTE}`, vendorRoute);
+app.use(`${BASE_ROUTE}${S3_ROUTE}`, s3Route);
 
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

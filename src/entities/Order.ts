@@ -11,10 +11,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { USD } from "../constants/currencyCodes";
 import { ORDER_STATUS } from "../constants/status";
 import { Business } from "./Business";
 import { Review } from "./Review";
-import {SpaceService} from './SpaceService'
+import { SpaceService } from "./SpaceService";
 
 import { User } from "./User";
 
@@ -29,8 +30,8 @@ export class Order {
   @Column({ type: "decimal", precision: 7, scale: 2, default: 0.0 })
   amount: number;
 
-  @Column({ default: 0 })
-  noOfChildren: number;
+  @Column({ default: USD })
+  currency: string;
 
   @Column({ default: "" })
   serviceName: string;

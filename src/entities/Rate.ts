@@ -14,6 +14,9 @@ export class Rate {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ type: "decimal", precision: 7, scale: 2, default: 0.0 })
+  amount: number;
+
   @Column({ nullable: false })
   currency: string;
 
