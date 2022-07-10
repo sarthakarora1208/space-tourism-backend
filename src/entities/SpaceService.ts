@@ -24,6 +24,12 @@ export class SpaceService {
   description: string;
 
   @Column({ default: 0 })
+  seats: number;
+
+  @Column({ default: 0 })
+  seatsLeft: number;
+
+  @Column({ default: 0 })
   averageRating: number;
 
   @Column({ default: 0 })
@@ -35,17 +41,17 @@ export class SpaceService {
   @Column({ default: "no-url" })
   imageUrl: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @Column({ type: "timestamptz", default: "NOW()" })
   startTime: Date;
 
   @Column({ type: "timestamptz", default: "NOW()" })
   endTime: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => Business, (business) => business.spaceServices)
   business: Business;

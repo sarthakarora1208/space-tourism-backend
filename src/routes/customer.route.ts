@@ -4,7 +4,7 @@ import {
   createCustomer,
   getCustomerById,
   updateCustomer,
-} from "../controllers/customerController";
+} from "../controllers/customer.controller";
 
 import orderRoute from "./order.route";
 import reviewRoute from "./review.route";

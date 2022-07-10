@@ -23,6 +23,7 @@ export const createCustomer = asyncHandler(
       city,
       postalCode,
       dob,
+      country,
     } = req.body;
     let customer = customerRepository.create({
       id,
@@ -36,6 +37,7 @@ export const createCustomer = asyncHandler(
       city,
       postalCode,
       dob,
+      country,
     });
     let newCustomer = await customerRepository.save(customer);
     res.status(201).json({

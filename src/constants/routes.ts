@@ -9,4 +9,4 @@ export const ORDER_ROUTE = "/order";
 export const REVIEW_ROUTE = "/review";
 export const VENDOR_ROUTE = "/vendor";
 export const S3_ROUTE = "/s3";
-export const SPACE_SSERVICE_ROUTE = "/space-service";
+export const SPACE_SERVICE_ROUTE = "/space-service";

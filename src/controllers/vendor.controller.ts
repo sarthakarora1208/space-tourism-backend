@@ -5,6 +5,10 @@ import { User } from "../entities/User";
 import { Business } from "../entities/Business";
 import { USER_ROLE } from "../constants/userRoles";
 import { dataSource } from "../server";
+import { ICreateWallet } from "../interfaces/db/idbwallet";
+import { makeId } from "../utils/makeId";
+import RapydService from "../services/rapydService";
+import { ICreateCustomer } from "../interfaces/db/idbcontact";
 
 //@desc			Create Vendor
 //@route		POST /api/v1/vendor
@@ -26,6 +30,7 @@ export const createVendor = asyncHandler(
       city,
       postalCode,
       dob,
+      country,
     } = req.body;
     let vendor = vendorRepository.create({
       id,
@@ -39,13 +44,59 @@ export const createVendor = asyncHandler(
       city,
       postalCode,
       dob,
+      country,
       role: USER_ROLE.VENDOR,
     });
 
-    let business = businessRepository.create({});
+    console.log(req.body);
+    let wallet: ICreateWallet.Root = {
+      phone_number: phone,
+      first_name: name,
+      last_name: name,
+      email: email,
+      type: "person",
+      ewallet_reference_id: makeId(8),
+      contact: {
+        address: null,
+        phone_number: phone,
+        contact_type: "personal",
+        country: country,
+        email: email,
+        first_name: name,
+        last_name: name,
+      },
+    };
+    const rapydService = new RapydService();
+    let newWallet = await rapydService.createWallet(wallet);
+    if (newWallet) {
+      let business = businessRepository.create({
+        businessName: name,
+        eWallet: newWallet.id,
+        country,
+        address,
+      });
+      if (newWallet.contacts.data.length > 0) {
+        let rapydContact = newWallet.contacts.data[0];
+        business.contact = rapydContact.id;
+        let customer: ICreateCustomer = {
+          name: rapydContact.first_name + " " + rapydContact!.last_name,
+          phone_number: rapydContact.phone_number,
+          metadata: {
+            contact_reference_id: makeId(8),
+          },
+          business_vat_id: makeId(8),
+          ewallet: newWallet!.id,
+          email: email,
+          invoice_prefix: makeId(4) + "-",
+        };
+        let newCustomer = await rapydService.createCustomer(customer);
+        console.log(newCustomer);
+      }
 
-    let newbusiness = await businessRepository.save(business);
-    vendor.business = newbusiness;
+      let newbusiness = await businessRepository.save(business);
+      vendor.business = newbusiness;
+    }
+
     let newVendor = await vendorRepository.save(vendor);
 
     res.status(201).json({

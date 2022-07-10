@@ -37,11 +37,9 @@ export class Business {
   @Column({ default: "GB" })
   country: string;
 
-  @Column({ default: "" })
-  phoneNumber: string;
-
   @Column({ default: "no-address" })
   address: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

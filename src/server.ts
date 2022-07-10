@@ -26,6 +26,7 @@ import {
   RAPYD_ROUTE,
   REVIEW_ROUTE,
   S3_ROUTE,
+  SPACE_SERVICE_ROUTE,
   VENDOR_ROUTE,
   WEBHOOK_ROUTE,
 } from "./constants/routes";
@@ -38,6 +39,7 @@ import orderRoute from "./routes/order.route";
 import reviewRoute from "./routes/review.route";
 import vendorRoute from "./routes/vendor.route";
 import s3Route from "./routes/s3.route";
+import spaceServiceRoute from "./routes/spaceService.route";
 
 import { User } from "./entities/User";
 import { Business } from "./entities/Business";
@@ -149,6 +151,7 @@ app.use(`${BASE_ROUTE}${ORDER_ROUTE}`, orderRoute);
 app.use(`${BASE_ROUTE}${REVIEW_ROUTE}`, reviewRoute);
 app.use(`${BASE_ROUTE}${VENDOR_ROUTE}`, vendorRoute);
 app.use(`${BASE_ROUTE}${S3_ROUTE}`, s3Route);
+app.use(`${BASE_ROUTE}${SPACE_SERVICE_ROUTE}`, spaceServiceRoute);
 
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

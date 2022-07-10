@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { dataSource } from "../server";
 import { SpaceService } from "../entities/SpaceService";
 import { Business } from "../entities/Business";
+import { Rate } from "../entities/Rate";
 
 //@desc     Get Space Service by id
 //@route		GET /api/v1/space/:id
@@ -47,14 +48,14 @@ export const getSpaceServices = asyncHandler(
       const id = req.params.businessId;
       spaceServices = await spaceServiceRepository.find({
         where: { business: { id } },
-        relations: ["availability", "business"],
+        relations: ["business", "rates"],
       });
     } else {
       spaceServices = await spaceServiceRepository.find({
         where: {
           isAvailable: true,
         },
-        relations: ["business"],
+        relations: ["business", "rates"],
       });
     }
 
@@ -73,12 +74,27 @@ export const createSpaceService = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const spaceServiceRepository = dataSource.getRepository(SpaceService);
     const businessRepository = dataSource.getRepository(Business);
+    const rateRepository = dataSource.getRepository(Rate);
 
-    const { name, description, businessId } = req.body;
+    const {
+      name,
+      description,
+      seats,
+      startTime,
+      endTime,
+      imageUrl,
+      businessId,
+      rates,
+    } = req.body;
 
     const spaceService = spaceServiceRepository.create({
       name,
       description,
+      seats,
+      seatsLeft: seats,
+      startTime,
+      endTime,
+      imageUrl,
     });
 
     const business = await businessRepository.findOne({
@@ -92,6 +108,17 @@ export const createSpaceService = asyncHandler(
     spaceService.business = business;
 
     let newSpaceService = await spaceServiceRepository.save(spaceService);
+
+    let rateObjects: Rate[] = [];
+
+    for (let i = 0; i < rates.length; i++) {
+      let { amount, currency, country } = rates[i];
+      let rate = rateRepository.create({ amount, currency, country });
+      rate.spaceService = newSpaceService;
+      rateObjects.push(rate);
+    }
+
+    await rateRepository.save(rateObjects);
 
     res.status(200).json({
       success: true,
@@ -109,7 +136,7 @@ export const updateSpaceService = asyncHandler(
     const spaceServiceRepository = dataSource.getRepository(SpaceService);
 
     const id = req.params.id;
-    const { name, description, imageUrl } = req.body;
+    const { name, description, seats, startTime, endTime, imageUrl } = req.body;
 
     const spaceService = await spaceServiceRepository.findOne({
       where: { id },
