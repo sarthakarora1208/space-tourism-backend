@@ -7,6 +7,7 @@ import {
 import {
   getBusinessById,
   markIsBusinessVerified,
+  verifyIdentity,
 } from "../controllers/business.controller";
 
 import orderRoute from "./order.route";
@@ -23,5 +24,6 @@ router.use(`/:businessId${SPACE_SERVICE_ROUTE}`, spaceServiceRoute);
 
 router.route("/:id").get(protect, getBusinessById);
 router.route("/:id/verified").post(protect, markIsBusinessVerified);
+router.route("/:id/verify-identity").post(protect, verifyIdentity);
 
 export = router;

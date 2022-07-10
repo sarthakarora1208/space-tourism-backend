@@ -5,6 +5,9 @@ import { Business } from "../entities/Business";
 import { User } from "../entities/User";
 import { dataSource } from "../server";
 import { SpaceService } from "../entities/SpaceService";
+import { IdentityVerification } from "../interfaces/rapyd/iwallet";
+import RapydService from "../services/rapydService";
+import { makeId } from "../utils/makeId";
 
 //@desc			Mark Business Verified
 //@route		POST /api/v1/business/:id/verified
@@ -86,6 +89,53 @@ export const getBusinessById = asyncHandler(
     res.status(200).json({
       success: true,
       data: business,
+    });
+  }
+);
+
+//@desc
+//@route		POST /api/v1/business/:id/verify-identity
+//@access		Public
+
+export const verifyIdentity = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    const businessRepository = dataSource.getRepository(Business);
+
+    const id = req.params.id;
+
+    const business = await businessRepository.findOne({
+      where: { id },
+      relations: ["users"],
+    });
+
+    if (!business) {
+      return next(
+        new ErrorResponse(`Business not found with id of ${id}`, 404)
+      );
+    }
+
+    let identityVerificationRequest: IdentityVerification.Request = {
+      reference_id: `${makeId(9)}success`,
+      ewallet: business.eWallet,
+      contact: business.contact,
+      complete_url: "",
+      cancel_url: "",
+      page_expiration: 5,
+    };
+    console.log(identityVerificationRequest);
+
+    let response = await rapydService.generateIdentityVerificationPage(
+      identityVerificationRequest
+    );
+
+    if (!business) {
+      return next(new ErrorResponse(`Couldn't verify identity`, 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: response?.redirect_url,
     });
   }
 );

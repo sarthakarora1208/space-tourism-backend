@@ -115,6 +115,7 @@ class RapydService {
       const response = await this._axiosClient.post<
         RapydResponse<IdentityVerification.Response>
       >("/v1/hosted/idv", body);
+      console.log(response);
       return response.data.data;
     } catch (error: any) {
       if (error.isAxiosError) {

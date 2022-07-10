@@ -5,6 +5,9 @@ import { dataSource } from "../server";
 import { SpaceService } from "../entities/SpaceService";
 import { Business } from "../entities/Business";
 import { Rate } from "../entities/Rate";
+import RapydService from "../services/rapydService";
+import { ICreateVirtualAccount } from "../interfaces/db/idbvirtualaccount";
+import { makeId } from "../utils/makeId";
 
 //@desc     Get Space Service by id
 //@route		GET /api/v1/space/:id
@@ -75,6 +78,7 @@ export const createSpaceService = asyncHandler(
     const spaceServiceRepository = dataSource.getRepository(SpaceService);
     const businessRepository = dataSource.getRepository(Business);
     const rateRepository = dataSource.getRepository(Rate);
+    const rapydService = new RapydService();
 
     const {
       name,
@@ -119,6 +123,30 @@ export const createSpaceService = asyncHandler(
     }
 
     await rateRepository.save(rateObjects);
+
+    let wallet = await rapydService.getWallet(business.eWallet);
+
+    console.log(wallet);
+
+    for (let i = 0; i < rateObjects.length; i++) {
+      let rate = rateObjects[i];
+      if (wallet.verification_status === "verified") {
+        let createVirtualAccount: ICreateVirtualAccount = {
+          currency: rate.currency,
+          country: rate.country,
+          description: `${rate.spaceService.name} ${rate.country} ${rate.currency}`,
+          ewallet: business.eWallet,
+          merchant_reference_id: makeId(8),
+          metadata: {
+            merchant_defined: true,
+          },
+        };
+        let response = await rapydService.issueVirtualAccountToWallet(
+          createVirtualAccount
+        );
+        console.log(response);
+      }
+    }
 
     res.status(200).json({
       success: true,

@@ -55,16 +55,29 @@ export const createWallet = asyncHandler(
     //   "ewallet_8a8782e022648cce7ed1bef11618eceb"
     // );
     // console.log(contacts);
-    // let identityVerificationRequest: IdentityVerification.Request = {
-    //   reference_id: "123456789success",
-    //   ewallet: "ewallet_8a8782e022648cce7ed1bef11618eceb",
-    //   contact: "cont_dc860cd603c0705ec57542a0bf4f983a",
-    //   page_expiration: 5,
-    // };
-    // let response1 = await rapydService.generateIdentityVerificationPage(
-    //   identityVerificationRequest
-    // );
-    //console.log(response1);
+    let identityVerificationRequest: IdentityVerification.Request = {
+      reference_id: "123456780success",
+      ewallet: "ewallet_8a8782e022648cce7ed1bef11618eceb",
+      contact: "cont_dc860cd603c0705ec57542a0bf4f983a",
+      complete_url: "",
+      cancel_url: "",
+      page_expiration: 5,
+    };
+
+    let identityVerificationRequest1: IdentityVerification.Request = {
+      reference_id: "Y8VX6dJNsuccess",
+      ewallet: "ewallet_a2b5c1e186a95853e2c41e511a7ff12c",
+      contact: "cont_cd0d45975cb7a4b3cef6ae564232efe1",
+      complete_url: "",
+      cancel_url: "",
+      page_expiration: 5,
+    };
+
+    let response1 = await rapydService.generateIdentityVerificationPage(
+      identityVerificationRequest1
+    );
+
+    console.log(response1);
     let wallet = await rapydService.getWallet(
       "ewallet_8a8782e022648cce7ed1bef11618eceb"
     );
@@ -88,15 +101,15 @@ export const createWallet = asyncHandler(
       //       "ewallet_8a8782e022648cce7ed1bef11618eceb"
       //    );
       //   console.log(response);
-      let simulateBankTransfer: ISimulateBankTransfer = {
-        issued_bank_account: "issuing_b80faa8884bb92dd83c67af400524f1e",
-        amount: "100",
-        currency: "EUR",
-      };
-      let response = await rapydService.simulateBankTransfer(
-        simulateBankTransfer
-      );
-      console.log(response);
+      // let simulateBankTransfer: ISimulateBankTransfer = {
+      //   issued_bank_account: "issuing_b80faa8884bb92dd83c67af400524f1e",
+      //   amount: "100",
+      //   currency: "EUR",
+      // };
+      // let response = await rapydService.simulateBankTransfer(
+      //   simulateBankTransfer
+      // );
+      // console.log(response);
       //let response = await rapydService.retrieveVirtualAccountHistory(
       //"issuing_b80faa8884bb92dd83c67af400524f1e"
       //);
