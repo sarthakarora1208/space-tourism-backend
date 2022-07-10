@@ -17,7 +17,7 @@ export const getOrderById = asyncHandler(
     const id = req.params.id;
     const order = await orderRepository.findOne({
       where: { id },
-      relations: ["user", "business", "spaceService", "children", "review"],
+      relations: ["user", "business", "spaceService", "review"],
     });
     if (!order) {
       return next(new ErrorResponse(`Order not found with id of ${id}`, 404));
@@ -47,7 +47,7 @@ export const getOrders = asyncHandler(
       const id = req.params.businessId;
       orders = await orderRepository.find({
         where: { business: { id }, status },
-        relations: ["review", "business", "user", "children", "spaceService"],
+        relations: ["review", "business", "user", "spaceService"],
       });
     } else if (req.params.customerId) {
       const id = req.params.customerId;
