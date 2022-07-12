@@ -17,6 +17,7 @@ import { IdentityVerification } from "../interfaces/rapyd/iwallet";
 import {
   ICreateVirtualAccount,
   ICreateVirtualAccountResponse,
+  IListAllVirtualAccountsResponse,
   ISimulateBankTransfer,
 } from "../interfaces/db/idbvirtualaccount";
 
@@ -164,11 +165,13 @@ class RapydService {
     }
   }
 
-  public async listVirtualAccountsByWallet(ewallet: string): Promise<any> {
+  public async listVirtualAccountsByWallet(
+    ewallet: string
+  ): Promise<IListAllVirtualAccountsResponse | undefined> {
     try {
-      const response = await this._axiosClient.get<RapydResponse<any>>(
-        `/v1/issuing/bankaccounts/list?ewallet=${ewallet}`
-      );
+      const response = await this._axiosClient.get<
+        RapydResponse<IListAllVirtualAccountsResponse>
+      >(`/v1/issuing/bankaccounts/list?ewallet=${ewallet}`);
       return response.data.data;
     } catch (error: any) {
       if (error.isAxiosError) {
@@ -225,6 +228,26 @@ class RapydService {
     try {
       const response = await this._axiosClient.get<RapydResponse<any>>(
         `/v1/issuing/bankaccounts/${issued_bank_account}/transactions/${transaction}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async retrieveRemitterDetails(
+    issued_bank_account: string,
+    transaction: string
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/issuing/bankaccounts/remitters/${issued_bank_account}/transactions/${transaction}`
       );
       return response.data.data;
     } catch (error: any) {

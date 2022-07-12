@@ -6,7 +6,10 @@ import {
 } from "../constants/routes";
 import {
   getBusinessById,
+  getTransactionsForBankAccount,
+  getVirtualAccounts,
   markIsBusinessVerified,
+  simulateBankTransfer,
   verifyIdentity,
 } from "../controllers/business.controller";
 
@@ -25,5 +28,8 @@ router.use(`/:businessId${SPACE_SERVICE_ROUTE}`, spaceServiceRoute);
 router.route("/:id").get(protect, getBusinessById);
 router.route("/:id/verified").post(protect, markIsBusinessVerified);
 router.route("/:id/verify-identity").post(protect, verifyIdentity);
+router.route("/:id/accounts").get(protect, getVirtualAccounts);
+router.route("/:id/transactions").get(protect, getTransactionsForBankAccount);
+router.route("/simulate-transfer").post(protect, simulateBankTransfer);
 
 export = router;

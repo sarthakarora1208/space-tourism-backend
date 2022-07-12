@@ -8,6 +8,7 @@ import { SpaceService } from "../entities/SpaceService";
 import { IdentityVerification } from "../interfaces/rapyd/iwallet";
 import RapydService from "../services/rapydService";
 import { makeId } from "../utils/makeId";
+import { ISimulateBankTransfer } from "../interfaces/db/idbvirtualaccount";
 
 //@desc			Mark Business Verified
 //@route		POST /api/v1/business/:id/verified
@@ -136,6 +137,87 @@ export const verifyIdentity = asyncHandler(
     res.status(200).json({
       success: true,
       data: response?.redirect_url,
+    });
+  }
+);
+
+//@desc
+//@route		GET /api/v1/business/:id/accounts
+//@access		Public
+
+export const getVirtualAccounts = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    const businessRepository = dataSource.getRepository(Business);
+
+    const id = req.params.id;
+
+    const business = await businessRepository.findOne({
+      where: { id },
+      relations: ["users"],
+    });
+
+    if (!business) {
+      return next(
+        new ErrorResponse(`Business not found with id of ${id}`, 404)
+      );
+    }
+    console.log(business.eWallet);
+    let response = await rapydService.listVirtualAccountsByWallet(
+      business.eWallet
+    );
+
+    console.log(response);
+
+    res.status(200).json({
+      success: true,
+      data: response?.bank_accounts,
+    });
+  }
+);
+
+//@desc
+//@route		POST /api/v1/business/:id/transactions
+//@access		Public
+
+export const getTransactionsForBankAccount = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    const id = req.params.id;
+
+    let response = await rapydService.retrieveVirtualAccountHistory(id);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        bank_account: response.bank_account,
+        transactions: response.transactions,
+        currency: response.currency,
+      },
+    });
+  }
+);
+
+//@desc
+//@route		POST /api/v1/business/simulate-bank-transfer
+//@access		Public
+
+export const simulateBankTransfer = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+
+    let { issued_bank_account, amount, currency } = req.body;
+    let simulateBankTransfer: ISimulateBankTransfer = {
+      issued_bank_account,
+      amount,
+      currency,
+    };
+
+    let response = await rapydService.simulateBankTransfer(
+      simulateBankTransfer
+    );
+    res.status(200).json({
+      success: true,
     });
   }
 );
