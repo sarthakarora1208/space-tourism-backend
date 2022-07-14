@@ -77,14 +77,22 @@ export const createOrder = asyncHandler(
     const userRepository = dataSource.getRepository(User);
     const spaceServiceRepository = dataSource.getRepository(SpaceService);
 
-    const { amount, startTime, endTime, serviceId, userId, chatRoomId } =
-      req.body;
-    console.log(req.body);
+    const {
+      amount,
+      currency,
+      serviceName,
+      startTime,
+      endTime,
+      serviceId,
+      userId,
+    } = req.body;
 
     const order = orderRepository.create({
       amount,
       startTime,
       endTime,
+      currency,
+      serviceName,
     });
 
     let user = await userRepository.findOne({
@@ -110,9 +118,13 @@ export const createOrder = asyncHandler(
     order.spaceService = spaceService;
     order.business = spaceService.business;
 
-    res.status(200).json({
+    let newOrder = await orderRepository.save(order);
+
+    console.log(newOrder);
+
+    res.status(201).json({
       success: true,
-      data: order,
+      data: newOrder,
     });
   }
 );
@@ -140,6 +152,34 @@ export const completeOrder = asyncHandler(
     let completedOrder = await orderRepository.save(order);
 
     // make payment to vendor account using stripe
+    res.status(200).json({
+      success: true,
+      data: completedOrder,
+    });
+  }
+);
+//@desc		 	Ongoing Order
+//@route		POST /api/v1/order/:id/ongoing
+//@access		Public
+
+export const ongoingOrder = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const orderRepository = dataSource.getRepository(Order);
+    const id = req.params.id;
+    const order = await orderRepository.findOne({
+      where: { id },
+      relations: ["business"],
+    });
+
+    if (!order) {
+      return next(new ErrorResponse(`Order not found with id of ${id}`, 404));
+    }
+
+    orderRepository.merge(order, {
+      status: ORDER_STATUS.ONGOING,
+    });
+    let completedOrder = await orderRepository.save(order);
+
     res.status(200).json({
       success: true,
       data: completedOrder,

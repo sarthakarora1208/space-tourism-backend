@@ -110,14 +110,20 @@ export const createWallet = asyncHandler(
       //   simulateBankTransfer
       // );
       // console.log(response);
-      let response1 = await rapydService.retrieveVirtualAccountHistory(
-        "issuing_b80faa8884bb92dd83c67af400524f1e"
+      //let response1 = await rapydService.retrieveVirtualAccountHistory(
+      // "issuing_b80faa8884bb92dd83c67af400524f1e"
+      //);
+      let response1 = await rapydService.retrieveVirtualAccountTransaction(
+        "issuing_b80faa8884bb92dd83c67af400524f1e",
+        "isutran_2f9207af76de14639fa64c977ce70202"
       );
-      // let response = await rapydService.retrieveVirtualAccountTransaction(
-      //   "issuing_b80faa8884bb92dd83c67af400524f1e",
-      //   "isutran_2f9207af76de14639fa64c977ce70202"
-      // );
       console.log(response1);
+
+      let response2 = await rapydService.retrieveRemitterDetails(
+        "issuing_b80faa8884bb92dd83c67af400524f1e",
+        "isutran_2f9207af76de14639fa64c977ce70202"
+      );
+      console.log(response2);
     }
 
     res.status(200).json({ success: true });

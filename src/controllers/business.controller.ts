@@ -206,6 +206,7 @@ export const simulateBankTransfer = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const rapydService = new RapydService();
 
+    console.log(req.body);
     let { issued_bank_account, amount, currency } = req.body;
     let simulateBankTransfer: ISimulateBankTransfer = {
       issued_bank_account,
@@ -219,5 +220,16 @@ export const simulateBankTransfer = asyncHandler(
     res.status(200).json({
       success: true,
     });
+  }
+);
+
+//@desc
+//@route		POST /api/v1/
+//@access		Public
+
+export const retrieveRemitterDetails = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    let { issued_bank_account, transaction } = req.body;
   }
 );

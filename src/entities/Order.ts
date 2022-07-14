@@ -27,7 +27,7 @@ export class Order {
   @Column({ type: "enum", enum: ORDER_STATUS, default: ORDER_STATUS.INIT })
   status: ORDER_STATUS;
 
-  @Column({ type: "decimal", precision: 7, scale: 2, default: 0.0 })
+  @Column({ type: "decimal", precision: 11, scale: 2, default: 0.0 })
   amount: number;
 
   @Column({ default: USD })
@@ -47,9 +47,6 @@ export class Order {
 
   @Column({ default: "" })
   cancellationComment: string;
-
-  @Column({ default: "" })
-  chatRoomId: string;
 
   @CreateDateColumn()
   createdAt: Date;
