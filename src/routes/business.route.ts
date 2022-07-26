@@ -9,6 +9,7 @@ import {
   getTransactionsForBankAccount,
   getVirtualAccounts,
   markIsBusinessVerified,
+  retrieveRemitterDetails,
   simulateBankTransfer,
   verifyIdentity,
 } from "../controllers/business.controller";
@@ -31,5 +32,7 @@ router.route("/:id/verify-identity").post(protect, verifyIdentity);
 router.route("/:id/accounts").get(protect, getVirtualAccounts);
 router.route("/:id/transactions").get(protect, getTransactionsForBankAccount);
 router.route("/simulate-transfer").post(protect, simulateBankTransfer);
+router.route("/retrieve-bank-account").post(protect, retrieveRemitterDetails);
+//router.route("/create-benificiary").post(protect, createBenificiary);
 
 export = router;

@@ -6,6 +6,7 @@ import { dataSource } from "../server";
 import { SpaceService } from "../entities/SpaceService";
 import { User } from "../entities/User";
 import { ORDER_STATUS } from "../constants/status";
+import RapydService from "../services/rapydService";
 
 //@desc			Get Order By Id
 //@route		GET /api/v1/order/:id
@@ -80,6 +81,7 @@ export const createOrder = asyncHandler(
     const {
       amount,
       currency,
+      country,
       serviceName,
       startTime,
       endTime,
@@ -87,12 +89,32 @@ export const createOrder = asyncHandler(
       userId,
     } = req.body;
 
+    let spaceService = await spaceServiceRepository.findOne({
+      where: { id: serviceId },
+      relations: ["business", "rates"],
+    });
+
+    if (!spaceService) {
+      return next(new ErrorResponse("Space service not found", 404));
+    }
+    console.log(
+      spaceService.rates.filter((rate) => rate.currency === currency)
+    );
+
+    let senderId =
+      spaceService.rates.filter((rate) => rate.currency === currency).length > 0
+        ? spaceService.rates.filter((rate) => rate.currency === currency)[0]
+            .senderId
+        : "";
+
     const order = orderRepository.create({
       amount,
+      country,
       startTime,
       endTime,
       currency,
       serviceName,
+      senderId,
     });
 
     let user = await userRepository.findOne({
@@ -105,22 +127,11 @@ export const createOrder = asyncHandler(
 
     order.user = user;
 
-    let spaceService = await spaceServiceRepository.findOne({
-      where: { id: serviceId },
-      relations: ["business"],
-    });
-
-    if (!spaceService) {
-      return next(new ErrorResponse("Space service not found", 404));
-    }
-
     order.serviceName = spaceService.name;
     order.spaceService = spaceService;
     order.business = spaceService.business;
 
     let newOrder = await orderRepository.save(order);
-
-    console.log(newOrder);
 
     res.status(201).json({
       success: true,
@@ -218,6 +229,47 @@ export const cancelOrder = asyncHandler(
     res.status(200).json({
       success: true,
       data: cancelledOrder,
+    });
+  }
+);
+//@desc       Cancel Order With Refund
+//@route		POST /api/v1/order/:id/cancel-refund
+//@access		Public
+
+export const cancelOrderAndRefund = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    const orderRepository = dataSource.getRepository(Order);
+    const id = req.params.id;
+    console.log(id);
+    const { cancellationComment, cancellationReason } = req.body;
+
+    const order = await orderRepository.findOne({
+      where: { id },
+    });
+
+    if (!order) {
+      return next(new ErrorResponse(`Order not found with id of ${id}`, 404));
+    }
+
+    orderRepository.merge(order, {
+      //  status: ORDER_STATUS.CANCELLED,
+      cancellationComment,
+      cancellationReason,
+    });
+
+    let cancelledOrder = await orderRepository.save(order);
+
+    // initiate refund
+    let response = await await rapydService.createBenificiaryTokenizationPage(
+      order.currency,
+      order.country,
+      order.id
+    );
+
+    res.status(200).json({
+      success: true,
+      data: response.redirect_url,
     });
   }
 );

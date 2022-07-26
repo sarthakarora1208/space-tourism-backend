@@ -34,6 +34,12 @@ export class Order {
   currency: string;
 
   @Column({ default: "" })
+  country: string;
+
+  @Column({ default: "" })
+  senderId: string;
+
+  @Column({ default: "" })
   serviceName: string;
 
   @Column({ type: "timestamptz", default: "NOW()" })

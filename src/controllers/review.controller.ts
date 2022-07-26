@@ -90,10 +90,13 @@ export const createReview = asyncHandler(
     const orderRepository = dataSource.getRepository(Order);
     const spaceServiceRepository = dataSource.getRepository(SpaceService);
 
-    const { stars, content, serviceType, orderId, userId, serviceId } =
-      req.body;
+    const { stars, content, orderId, userId, serviceId } = req.body;
+    console.log(req.body);
+
+    const parsedStars = Math.floor(stars);
+    console.log(parsedStars);
     const review = reviewRepository.create({
-      stars,
+      stars: parsedStars,
       content,
     });
 

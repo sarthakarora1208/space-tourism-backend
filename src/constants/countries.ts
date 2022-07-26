@@ -31,6 +31,7 @@ export const countries = [
     countryName: "United Kingdom",
     countryCode: GB,
     currenciesAccepted: [GBP],
+    payout_method_type: ["gb_general_bank"],
   },
   {
     countryName: "Germany",

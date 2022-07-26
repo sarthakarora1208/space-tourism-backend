@@ -115,28 +115,31 @@ export const createSpaceService = asyncHandler(
 
     let rateObjects: Rate[] = [];
 
-    for (let i = 0; i < rates.length; i++) {
-      let { amount, currency, country } = rates[i];
-      let rate = rateRepository.create({ amount, currency, country });
-      rate.spaceService = newSpaceService;
-      rateObjects.push(rate);
-    }
-
-    await rateRepository.save(rateObjects);
+    // for (let i = 0; i < rates.length; i++) {
+    //   let { amount, currency, country } = rates[i];
+    //   let rate = rateRepository.create({ amount, currency, country });
+    //   rate.spaceService = newSpaceService;
+    //   rateObjects.push(rate);
+    // }
 
     let wallet = await rapydService.getWallet(business.eWallet);
 
     console.log(wallet);
 
-    for (let i = 0; i < rateObjects.length; i++) {
-      let rate = rateObjects[i];
+    for (let i = 0; i < rates.length; i++) {
       if (wallet.verification_status === "verified") {
+        let rate = rates[i];
+
+        let { amount, currency, country } = rate;
+
+        let merchant_reference_id = makeId(8);
+
         let createVirtualAccount: ICreateVirtualAccount = {
           currency: rate.currency,
           country: rate.country,
-          description: `${rate.spaceService.name} ${rate.country} ${rate.currency}`,
+          description: `${rate.country} ${rate.currency}`,
           ewallet: business.eWallet,
-          merchant_reference_id: makeId(8),
+          merchant_reference_id,
           metadata: {
             merchant_defined: true,
           },
@@ -144,9 +147,31 @@ export const createSpaceService = asyncHandler(
         let response = await rapydService.issueVirtualAccountToWallet(
           createVirtualAccount
         );
-        console.log(response);
+
+        //        console.log(response);
+
+        let sender = await rapydService.createSender(
+          country,
+          currency,
+          business.businessName,
+          business.businessName,
+          merchant_reference_id
+        );
+        console.log(sender);
+
+        let rateObj = rateRepository.create({
+          amount,
+          currency,
+          country,
+          senderId: sender.id,
+        });
+
+        rateObj.spaceService = newSpaceService;
+
+        rateObjects.push(rateObj);
       }
     }
+    await rateRepository.save(rateObjects);
 
     res.status(200).json({
       success: true,

@@ -224,12 +224,20 @@ export const simulateBankTransfer = asyncHandler(
 );
 
 //@desc
-//@route		POST /api/v1/
+//@route		POST /api/v1/business/retrive-bank-transfer
 //@access		Public
 
 export const retrieveRemitterDetails = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const rapydService = new RapydService();
     let { issued_bank_account, transaction } = req.body;
+    let response = await rapydService.retrieveRemitterDetails(
+      issued_bank_account,
+      transaction
+    );
+    res.status(200).json({
+      sucess: true,
+      res: response,
+    });
   }
 );

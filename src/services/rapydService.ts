@@ -261,6 +261,205 @@ class RapydService {
     }
   }
 
+  public async createBenificiaryTokenizationPage(
+    currency: string,
+    country: string,
+    merchant_reference_id: string
+  ): Promise<any> {
+    try {
+      console.log(merchant_reference_id);
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        `/v1/hosted/disburse/beneficiary`,
+        {
+          category: "bank",
+          beneficiary_entity_type: "individual",
+          merchant_reference_id: merchant_reference_id,
+          cancel_url: "http://example.com/cancel",
+          complete_url: "http://example.com/complete",
+          sender_country: country,
+          // beneficiary_optional_fields: {
+          //   identification_type: "international_passport",
+          //   identification_value: "123456789",
+          // },
+          sender_currency: currency,
+          payout_currency: currency,
+          sender_entity_type: "individual",
+        }
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async createSender(
+    country: string,
+    currency: string,
+    first_name: string,
+    last_name: string,
+    identification_value: string
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        `/v1/payouts/sender`,
+        {
+          country,
+          currency,
+          entity_type: "individual",
+          first_name,
+          last_name,
+          identification_type: "identification_id",
+          identification_value,
+        }
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async retrieveSender(sender: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/payouts/sender/${sender}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async retrieveBeneficiary(beneficiary: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/payouts/beneficiary/${beneficiary}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async createPayout(
+    beneficiary_id: string,
+    sender_id: string,
+    country: string,
+    ewallet: string,
+    amount: string,
+    currency: string,
+    payout_method_type: string
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        `/v1/payouts`,
+        {
+          beneficiary: beneficiary_id,
+          beneficiary_country: country,
+          beneficiary_entity_type: "individual",
+          confirm_automatically: true,
+          description: "Refund for",
+          ewallet: ewallet,
+          payout_amount: amount,
+          payout_currency: currency,
+          payout_method_type: payout_method_type,
+          sender: sender_id,
+          sender_country: country,
+          sender_currency: currency,
+          sender_entity_type: "individual",
+          statement_descriptor: "Refund initated",
+          metadata: {
+            merchant_defined: true,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+  public async completePayout(payout_id: string, amount: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        `/v1/payouts/complete/${payout_id}/${amount}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+  public async getPayoutRequiredFields(
+    country: string,
+    currency: string,
+    payout_method_type: string
+  ): Promise<any> {
+    try {
+      let url = `/v1/payouts/${payout_method_type}/details?beneficiary_country=${country.toLowerCase()}&beneficiary_entity_type=individual&payout_amount=251&payout_currency=${currency.toLocaleLowerCase()}&sender_country=${country.toLocaleLowerCase()}&sender_currency=${currency.toLocaleLowerCase()}&sender_entity_type=individual`;
+      const response = await this._axiosClient.get<RapydResponse<any>>(url);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async listPayoutMethodTypes(payout_currency: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/payouts/supported_types?payout_currency=${payout_currency}&limit=2`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
   public authWebhookRequest(
     incomeSign: string,
     url: string,

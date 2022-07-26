@@ -23,6 +23,9 @@ export class Rate {
   @Column({ nullable: false })
   country: string;
 
+  @Column({ nullable: false, default: "" })
+  senderId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
