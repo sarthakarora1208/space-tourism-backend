@@ -54,6 +54,12 @@ export class Order {
   @Column({ default: "" })
   cancellationComment: string;
 
+  @Column({ default: "" })
+  beneficiaryId: string;
+
+  @Column({ default: "" })
+  payoutId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -6,6 +6,8 @@ import webhookEventService from "../services/webhookEventService";
 import { dataSource } from "../server";
 import { Order } from "../entities/Order";
 import { ORDER_STATUS } from "../constants/status";
+import { buildMessage } from "class-validator";
+import { makeId } from "../utils/makeId";
 
 export const postWebhook = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -40,9 +42,10 @@ export const postWebhook = asyncHandler(
       // console.log(order!.amount.toString());
       // console.log(currency);
       // console.log(default_payout_method_type);
-      let beneficiary = await rapydService.retrieveBeneficiary(id);
+      //console.log(id);
+      //let beneficiary = await rapydService.retrieveBeneficiary(id);
       //console.log(beneficiary);
-      let sender = await rapydService.retrieveSender(senderId);
+      //let sender = await rapydService.retrieveSender(senderId);
       //console.log(sender);
 
       let requiredPayoutFields = await rapydService.getPayoutRequiredFields(
@@ -51,10 +54,60 @@ export const postWebhook = asyncHandler(
         default_payout_method_type
       );
       console.log(requiredPayoutFields);
+      let mandatoryFields = ["country", "currency", "first_name", "last_name"];
+      let senderBody: any = {};
+      for (
+        let i = 0;
+        i < requiredPayoutFields.sender_required_fields.length;
+        i++
+      ) {
+        let key = requiredPayoutFields.sender_required_fields[i].name;
+        if (!mandatoryFields.includes(key)) {
+          if (key === "address") {
+            senderBody.address = business.address;
+          }
+          if (key === "city") {
+            senderBody.city = business.address;
+          }
+          if (key === "state") {
+            senderBody.state = business.address;
+          }
+          if (key === "postcode") {
+            senderBody.postcode = "123456";
+          }
+          if (key === "date_of_birth") {
+            senderBody.date_of_birth = "12/12/1990";
+          }
+          if (key === "description") {
+            senderBody.description = "description";
+          }
+          if (key === "beneficiary_relationship") {
+            senderBody.beneficiary_relationship = "supplier";
+          }
+          if (key === "source_of_income") {
+            senderBody.source_of_income = "business";
+          }
+          if (key === "occupation") {
+            senderBody.occupation = "space vendor";
+          }
+          if (key === "identification_type") {
+            senderBody.identification_type = "company_registered_number";
+            senderBody.identification_value = makeId(8);
+          }
+        }
+      }
+
+      let sender = await rapydService.createSenderWithRequiredFields(
+        country,
+        currency,
+        order!.business.businessName,
+        order!.business.businessName,
+        senderBody
+      );
 
       let payout = await rapydService.createPayout(
         id,
-        senderId,
+        sender.id,
         country,
         business.eWallet,
         order!.amount.toString(),
@@ -65,8 +118,11 @@ export const postWebhook = asyncHandler(
         payout.id,
         order!.amount.toString()
       );
+      console.log(payout1);
       orderRepository.merge(order!, {
         status: ORDER_STATUS.CANCELLED,
+        beneficiaryId: id,
+        payoutId: payout.id,
       });
 
       let cancelledOrder = await orderRepository.save(order!);

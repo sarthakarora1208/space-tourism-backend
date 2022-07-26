@@ -150,20 +150,20 @@ export const createSpaceService = asyncHandler(
 
         //        console.log(response);
 
-        let sender = await rapydService.createSender(
-          country,
-          currency,
-          business.businessName,
-          business.businessName,
-          merchant_reference_id
-        );
-        console.log(sender);
+        // let sender = await rapydService.createSender(
+        //   country,
+        //   currency,
+        //   business.businessName,
+        //   business.businessName,
+        //   merchant_reference_id
+        // );
+        // console.log(sender);
 
         let rateObj = rateRepository.create({
           amount,
           currency,
           country,
-          senderId: sender.id,
+          //senderId: sender.id,
         });
 
         rateObj.spaceService = newSpaceService;

@@ -9,6 +9,7 @@ import {
   ICreateVirtualAccount,
   ISimulateBankTransfer,
 } from "../interfaces/db/idbvirtualaccount";
+import { Business } from "../entities/Business";
 
 //@desc
 //@route		POST /api/v1/
@@ -97,26 +98,89 @@ export const createWallet = asyncHandler(
     //   createVirtualAccount
     // );
     // console.log(response1);
-    let ewallet = "ewallet_8a8782e022648cce7ed1bef11618eceb";
-    let response = await rapydService.listVirtualAccountsByWallet(
-      "ewallet_8a8782e022648cce7ed1bef11618eceb"
-    );
-
+    let ewallet = "ewallet_689ce7f5339bc87ba7b03b37142705b1";
+    let response = await rapydService.listPayouts(ewallet);
     console.log(response);
-    let currency = response!.bank_accounts[0].currency;
-    let country = response!.bank_accounts[0].country_iso;
+    //console.log(response.length);
+    // let response = await rapydService.listVirtualAccountsByWallet(ewallet);
 
-    let methods = await rapydService.listPayoutMethodTypes(currency);
+    // console.log(response);
 
-    let payout_method_type = methods[0].payout_method_type;
+    // let currency = response!.bank_accounts[0].currency;
+    // let country = response!.bank_accounts[0].country_iso;
 
-    let res1 = await rapydService.getPayoutRequiredFields(
-      country,
-      currency,
-      payout_method_type
-    );
+    // let methods = await rapydService.listPayoutMethodTypes(currency);
+    // console.log(methods);
 
-    //console.log(res1);
+    // let payout_method_type = methods[0].payout_method_type;
+
+    // let beneficiaryId = "beneficiary_d22e249947594b4f4be2c44d51a8e0ed";
+    // let beneficiaryId1 = "beneficiary_1474813a33a6e2e47807d6b532e99052";
+    // let beneficiaryId2 = "beneficiary_28dbb24cfce782da36a34cbff019e39c";
+    // let beneficiary = await rapydService.retrieveBeneficiary(beneficiaryId2);
+    // console.log(beneficiary);
+
+    // let requiredPayoutFields = await rapydService.getPayoutRequiredFields(
+    //   beneficiary.country,
+    //   beneficiary.currency,
+    //   beneficiary.default_payout_method_type
+    // );
+
+    // console.log(requiredPayoutFields);
+    // let mandatoryFields = [
+    //   "country",
+    //   "currency",
+    //   "first_name",
+    //   "last_name",
+    //   "identification_type",
+    //   "identification_value",
+    // ];
+    // let senderBody: any = {};
+    // for (
+    //   let i = 0;
+    //   i < requiredPayoutFields.sender_required_fields.length;
+    //   i++
+    // ) {
+    //   let key = requiredPayoutFields.sender_required_fields[i].name;
+    //   if (!mandatoryFields.includes(key)) {
+    //     console.log(key);
+    //     if (key === "address") {
+    //       senderBody.address = "address";
+    //     }
+    //     if (key === "city") {
+    //       senderBody.city = "city";
+    //     }
+    //     if (key === "state") {
+    //       senderBody.state = "state";
+    //     }
+    //     if (key === "postcode") {
+    //       senderBody.postcode = "postcode";
+    //     }
+    //     if (key === "date_of_birth") {
+    //       senderBody.date_of_birth = "12/12/1990";
+    //     }
+    //     if (key === "description") {
+    //       senderBody.description = "description";
+    //     }
+    //     if (key === "beneficiary_relationship") {
+    //       senderBody.beneficiary_relationship = "supplier";
+    //     }
+    //     if (key === "source_of_income") {
+    //       senderBody.source_of_income = "business";
+    //     }
+    //     if (key === "occupation") {
+    //       senderBody.occupation = "space vendor";
+    //     }
+    //   }
+    // }
+    // const sender = await rapydService.createSenderWithRequiredFields(
+    //   country,
+    //   currency,
+    //   "First Name",
+    //   "Last Name",
+    //   "12345678",
+    //   {}
+    // );
     // const sender = await rapydService.createSender(
     //   country,
     //   currency,
@@ -131,7 +195,7 @@ export const createWallet = asyncHandler(
     // );
     // console.log(sender);
 
-    let senderId = "sender_6bb553bc04bfa863b2453a4a381858fb";
+    //let senderId = "sender_6bb553bc04bfa863b2453a4a381858fb";
     // console.log("***");
     // console.log(currency);
     // let response1 = await rapydService.createBenificiaryTokenizationPage(
@@ -141,10 +205,6 @@ export const createWallet = asyncHandler(
     // );
     // console.log("***");
     // console.log(response1);
-    // let beneficiary = await rapydService.retrieveBeneficiary(
-    //   "beneficiary_d26cc80727f5fa47293e52cc767ad4fc"
-    // );
-    // console.log(beneficiary);
 
     // let beneficiaryId = "beneficiary_db068fc0a031edaec9ae7bef2e32cade";
 
@@ -180,9 +240,9 @@ export const createWallet = asyncHandler(
     // );
     // console.log(response2);
     //}
-    let payout_id = "payout_e3ee5f3c667bb8659d8de6d5531b8122";
-    let payout = await rapydService.completePayout(payout_id, "500");
-    console.log(payout);
+    // let payout_id = "payout_e3ee5f3c667bb8659d8de6d5531b8122";
+    // let payout = await rapydService.completePayout(payout_id, "500");
+    // console.log(payout);
 
     res.status(200).json({ success: true });
   }

@@ -329,6 +329,37 @@ class RapydService {
       }
     }
   }
+  public async createSenderWithRequiredFields(
+    country: string,
+    currency: string,
+    first_name: string,
+    last_name: string,
+    body: any
+  ): Promise<any> {
+    try {
+      const response = await this._axiosClient.post<RapydResponse<any>>(
+        `/v1/payouts/sender`,
+        {
+          country,
+          currency,
+          entity_type: "individual",
+          first_name,
+          last_name,
+          identification_type: "identification_id",
+          ...body,
+        }
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
 
   public async retrieveSender(sender: string): Promise<any> {
     try {
@@ -447,6 +478,22 @@ class RapydService {
     try {
       const response = await this._axiosClient.get<RapydResponse<any>>(
         `/v1/payouts/supported_types?payout_currency=${payout_currency}&limit=2`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+  public async listPayouts(eWallet: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/payouts?ewallet=${eWallet}`
       );
       return response.data.data;
     } catch (error: any) {
