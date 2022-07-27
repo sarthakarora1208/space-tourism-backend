@@ -6,6 +6,8 @@ import {
 } from "../constants/routes";
 import {
   getBusinessById,
+  getPayoutsForBusiness,
+  getSupportedCurrencies,
   getTransactionsForBankAccount,
   getVirtualAccounts,
   markIsBusinessVerified,
@@ -31,8 +33,11 @@ router.route("/:id/verified").post(protect, markIsBusinessVerified);
 router.route("/:id/verify-identity").post(protect, verifyIdentity);
 router.route("/:id/accounts").get(protect, getVirtualAccounts);
 router.route("/:id/transactions").get(protect, getTransactionsForBankAccount);
+router.route("/payouts").post(protect, getPayoutsForBusiness);
+
 router.route("/simulate-transfer").post(protect, simulateBankTransfer);
 router.route("/retrieve-bank-account").post(protect, retrieveRemitterDetails);
 //router.route("/create-benificiary").post(protect, createBenificiary);
+router.route("/supported-currencies").post(protect, getSupportedCurrencies);
 
 export = router;

@@ -490,10 +490,28 @@ class RapydService {
       }
     }
   }
+
   public async listPayouts(eWallet: string): Promise<any> {
     try {
       const response = await this._axiosClient.get<RapydResponse<any>>(
         `/v1/payouts?ewallet=${eWallet}`
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.isAxiosError) {
+        console.log(error.response.data);
+        throw new ErrorResponse(
+          error.response.status,
+          error.response.data?.status || error.response.data
+        );
+      }
+    }
+  }
+
+  public async listCapabilities(country: string): Promise<any> {
+    try {
+      const response = await this._axiosClient.get<RapydResponse<any>>(
+        `/v1/issuing/bankaccounts/capabilities/${country}`
       );
       return response.data.data;
     } catch (error: any) {

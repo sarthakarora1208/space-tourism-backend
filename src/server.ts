@@ -74,7 +74,7 @@ export const dataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   logging: true,
-  synchronize: false,
+  synchronize: true,
   port: 5432,
   entities: [User, Business, Order, Review, SpaceService, Rate],
 });

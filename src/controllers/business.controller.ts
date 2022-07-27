@@ -241,3 +241,38 @@ export const retrieveRemitterDetails = asyncHandler(
     });
   }
 );
+
+//@desc     Get all business
+//@route		POST /api/v1/business/supported-currencies
+//@access		Public
+
+export const getSupportedCurrencies = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rapydService = new RapydService();
+    const { country } = req.body;
+    let response = await rapydService.listCapabilities(country);
+    console.log(response.supported_currencies);
+
+    res
+      .status(200)
+      .json({ success: true, data: response.supported_currencies });
+  }
+);
+
+//@desc     Get Payouts from Business
+//@route		GET /api/v1/business/:id/payouts
+//@access		Public
+
+export const getPayoutsForBusiness = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const businessRepository = dataSource.getRepository(Business);
+    const rapydService = new RapydService();
+    const { eWallet } = req.body;
+
+    let response = await rapydService.listPayouts(eWallet);
+    res.status(200).json({
+      success: true,
+      data: response.filter((payout) => payout.error === null),
+    });
+  }
+);

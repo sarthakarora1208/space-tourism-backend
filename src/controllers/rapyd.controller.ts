@@ -244,6 +244,8 @@ export const createWallet = asyncHandler(
     // let payout = await rapydService.completePayout(payout_id, "500");
     // console.log(payout);
 
+    let res1 = await rapydService.listCapabilities("SG");
+    console.log(res1.supported_currencies);
     res.status(200).json({ success: true });
   }
 );
