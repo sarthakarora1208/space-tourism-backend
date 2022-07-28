@@ -42,7 +42,7 @@
 
 You need a verified aws account to upload files to an S3 bucket
 
-You can get your credentials file at ~/.aws/credentials (C:\Users\USER_NAME\.aws\credentials for Windows users) and change the following lines in the [.env](./src/config/config.env) file.
+You can get your credentials file at `~/.aws/credentials (C:\Users\USER_NAME\.aws\credentials for Windows users)` and change the following lines in the [.env](./src/config/config.env) file.
 
 ```bash
 
