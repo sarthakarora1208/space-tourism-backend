@@ -4,5 +4,3 @@ src/build
 dist/
 package-lock.json
 .env
-
-src/config/*
